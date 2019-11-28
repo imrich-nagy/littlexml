@@ -2,7 +2,9 @@ import argparse
 import json
 import sys
 
-from littlexml import Lexer
+from littlexml.lexer import Lexer, LexicalError
+from littlexml.parser import Parser, ParsingError
+from littlexml.token import Token
 
 
 def parse_args():
@@ -12,7 +14,38 @@ def parse_args():
         description='Command line tool for parsing LittleXML files',
     )
     parser.set_defaults(handler=print_help)
-    subparsers = parser.add_subparsers(title='subcommands', dest='subcommand')
+    subparsers = parser.add_subparsers(
+        title='subcommands',
+        dest='subcommand',
+    )
+
+    validate_parser = subparsers.add_parser(
+        name='validate',
+        description='Validate LittleXML string',
+        help='perform lexical analysis',
+    )
+    validate_parser.set_defaults(handler=validate)
+    validate_parser.add_argument(
+        '-i', '--input-file',
+        nargs='?',
+        type=argparse.FileType('r'),
+        default=sys.stdin,
+        help='LittleXML file to validate',
+        dest='input_file',
+    )
+    validate_parser.add_argument(
+        '-t', '--tokens',
+        action='store_true',
+        help='read token stream in JSON format',
+        dest='tokens',
+    )
+    validate_parser.add_argument(
+        '-v', '--verbose',
+        action='store_true',
+        help='print top of stack and current token '
+             'at each step during parsing',
+        dest='verbose',
+    )
 
     tokenize_parser = subparsers.add_parser(
         name='tokenize',
@@ -59,6 +92,25 @@ def tokenize(parser, args):
     else:
         json.dump(lexer.as_dict(), args.output_file, indent=2)
         args.output_file.write('\n')
+
+
+def validate(parser, args):
+    if args.tokens:
+        token_list = json.load(args.input_file)
+        input_stream = Token.from_list(token_list=token_list)
+    else:
+        input_stream = args.input_file.read()
+    try:
+        Parser(
+            input_stream=input_stream,
+            parse_tokens=args.tokens,
+            verbose=args.verbose,
+        )
+    except (LexicalError, ParsingError) as error:
+        print(f'{error.name} -- {error}', file=sys.stderr)
+        exit(1)
+    else:
+        print(f'OK', file=sys.stderr)
 
 
 if __name__ == '__main__':

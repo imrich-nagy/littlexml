@@ -30,6 +30,13 @@ class Token:
         return token_dict
 
     @classmethod
+    def from_list(cls, token_list):
+        return [
+            cls.from_dict(token_dict=token_dict)
+            for token_dict in token_list
+        ]
+
+    @classmethod
     def from_dict(cls, token_dict):
         return Token(
             token_type=TokenType(token_dict['type']),

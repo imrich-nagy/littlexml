@@ -97,6 +97,7 @@ class Lexer:
 
         # If the character is whitespace, return a SPACE token
         if input_char in string.whitespace:
+            self._consume_space()
             return Token(
                 token_type=TokenType.SPACE,
                 start=self._position,
@@ -104,6 +105,8 @@ class Lexer:
 
         # Try to match character using the mapping
         if input_char in CHARACTER_MAPPING:
+            if input_char == '>':
+                self._consume_space()
             return Token(
                 token_type=CHARACTER_MAPPING[input_char],
                 start=self._position,
@@ -113,6 +116,7 @@ class Lexer:
         # If the character is a forward slash, try to match a GT_SLASH token
         if input_char == '/':
             self._consume(chars='>')
+            self._consume_space()
             return Token(
                 token_type=TokenType.GT_SLASH,
                 start=self._position,
@@ -181,6 +185,7 @@ class Lexer:
         # If the character is a greater-than sign, return a GT_XML token
         if next_char == '>':
             self._next_char()
+            self._consume_space()
             return Token(
                 token_type=TokenType.GT_XML,
                 start=self._position,
@@ -210,6 +215,16 @@ class Lexer:
                     f'{input_char}'
                 )
 
+    def _consume_space(self):
+        """
+        Move forward in the input stream while the characters are whitespace.
+        """
+        while self._peek_char():
+            if self._peek_char() in string.whitespace:
+                self._next_char()
+            else:
+                break
+
     def _next_char(self):
         """
         Move forward in the input stream by one character.
@@ -234,4 +249,4 @@ class Lexer:
 
 
 class LexicalError(Exception):
-    pass
+    name = 'Lexical error'
