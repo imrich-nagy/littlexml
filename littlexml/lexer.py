@@ -42,6 +42,8 @@ class Lexer:
     def _tokenize(self):
         """
         Perform lexical analysis of the input string.
+        :raises LexicalError: If an unexpected character or end of input is
+            found in the input stream
         """
         self._position = 0
         self._tokens = []

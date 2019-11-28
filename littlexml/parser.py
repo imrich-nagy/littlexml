@@ -7,7 +7,10 @@ from littlexml.token import TokenType
 
 class Parser:
     """
-    Parses a LittleXML string or stream of tokens.
+    Parses a LittleXML string or stream of lexical tokens.
+    :param input_stream: The string or token stream to be parsed
+    :param parse_tokens: Whether `input_stream` is a stream of tokens
+    :param verbose: Print verbose output
     """
 
     def __init__(self, input_stream, parse_tokens=False, verbose=False):
@@ -20,6 +23,11 @@ class Parser:
         self._parse()
 
     def _parse(self):
+        """
+        Perform syntactic analysis of the token stream.
+        :raises ParsingError: If an unexpected token or end of input is
+            found in the input stream
+        """
         self._position = 0
         self._stack = [RuleType.XML_DOCUMENT, TokenType.END_OF_STRING]
         while self._stack:
@@ -28,6 +36,12 @@ class Parser:
             self._stack = stack_next + self._stack
 
     def _next_rule(self, stack_top):
+        """
+        Analyze token at the current position in the input stream.
+        :return: List of elements to push to the stack
+        :raises ParsingError: If an unexpected token or end of input is
+            found in the input stream
+        """
         token = self._get_token()
 
         if self.verbose:
@@ -49,6 +63,11 @@ class Parser:
         )
 
     def _get_token(self):
+        """
+        Get current token in the input stream.
+        :return: The current token
+        :raises ParsingError: If end of input is found
+        """
         try:
             token = self._tokens[self._position]
         except IndexError:
