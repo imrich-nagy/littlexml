@@ -10,7 +10,7 @@ from littlexml.token import Token
 def parse_args():
 
     parser = argparse.ArgumentParser(
-        prog='python -m littlexml',
+        prog='littlexml',
         description='Command line tool for parsing LittleXML files',
     )
     parser.set_defaults(handler=print_help)

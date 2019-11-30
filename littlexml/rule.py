@@ -161,5 +161,6 @@ RULE_DICT = {
         RuleType.WORD,
     ],
     (RuleType.NEXT_CHAR, TokenType.SIGN): [
-        RuleType.WORD],
+        RuleType.WORD,
+    ],
 }

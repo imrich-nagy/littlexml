@@ -167,7 +167,7 @@ class Lexer:
             self._consume(chars=' ')
             space_token = Token(
                 token_type=TokenType.SPACE,
-                start=self._position
+                start=self._position,
             )
             position = self._position + 1
             self._consume(chars='version=')
