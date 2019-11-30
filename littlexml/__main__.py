@@ -22,7 +22,7 @@ def parse_args():
     validate_parser = subparsers.add_parser(
         name='validate',
         description='Validate LittleXML string',
-        help='perform lexical analysis',
+        help='perform syntactic analysis',
     )
     validate_parser.set_defaults(handler=validate)
     validate_parser.add_argument(

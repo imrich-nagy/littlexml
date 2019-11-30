@@ -158,16 +158,24 @@ class Lexer:
         # If the character is a question mark,
         # try to match LT_XML and VERSION tokens
         if next_char == '?':
-            self._consume(chars='?xml version=')
+            position = self._position
+            self._consume(chars='?xml')
             lt_xml_token = Token(
                 token_type=TokenType.LT_XML,
-                start=self._position,
+                start=position,
             )
+            self._consume(chars=' ')
+            space_token = Token(
+                token_type=TokenType.SPACE,
+                start=self._position
+            )
+            position = self._position + 1
+            self._consume(chars='version=')
             version_token = Token(
                 token_type=TokenType.VERSION,
-                start=self._position,
+                start=position,
             )
-            return [lt_xml_token, version_token]
+            return [lt_xml_token, space_token, version_token]
 
         # Otherwise return a LESS_THAN token
         return Token(

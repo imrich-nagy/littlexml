@@ -30,6 +30,7 @@ RULE_DICT = {
     ],
     (RuleType.XML_DECLARATION, TokenType.LT_XML): [
         TokenType.LT_XML,
+        TokenType.SPACE,
         TokenType.VERSION,
         RuleType.VERSION_NUMBER,
         TokenType.GT_XML,
